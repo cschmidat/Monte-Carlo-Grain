@@ -5,22 +5,9 @@
 #include <string.h>
 #include <stdint.h>
 
-#define STEPS 20000000000
-#define JUMPAR 1.8e11//initially 1.8e11
-#define KTEMPAN 10e3 //initially 7e3
-#define MINAR 5e11 //initially 5e12
-#define T1TRIES 1
-#define MEASP 1000 //measurement points
-#define MEASF 1000
-#define RATEP 10000 //#(polygons whose growth rate we'll calculate)
-#define ABST 10000
-#define BASEDIR "data/"
 #include "meas.c"
-
-#define unlikely(expr) __builtin_expect(!!(expr),0)
-#define likely(expr) __builtin_expect(!!(expr),1)
-#define POSORNE(a,b) ((pts[a].nb[0]==b)?0:((pts[a].nb[1]==b)?1:2))
-#define DOUBCON(a) (pts[a].nb[0]==pts[a].nb[1]||pts[a].nb[0]==pts[a].nb[2]||pts[a].nb[1]==pts[a].nb[2])
+#include "simu.h"
+#include "consts.h"
 
 /*
 Simulation: 
@@ -46,18 +33,17 @@ int spolylist[]={10000,4000,1000,2001,3002,4003,5004,6005,1762,2434,5339,70927,1
 struct polydata *spolydata;
 double t=0;
 
-
 static inline unsigned int mein_rand(void){
     MEIN_RAND_STATE=1664525L*MEIN_RAND_STATE+1013904223L;
     return MEIN_RAND_STATE;
 }
-inline int setvars(void){
+static inline int setvars(void){
 	minar=MINAR*N/n;
 	jumpar=JUMPAR*N/n;
 	ktemp=KTEMPAN*sqrt((double)n/N);
 }
 
-inline char jumptest(double dx, double dy, int dist1x, int dist1y, int dist2x, int dist2y, int dist3x, int dist3y){//test whether jump shall be made
+static inline char jumptest(double dx, double dy, int dist1x, int dist1y, int dist2x, int dist2y, int dist3x, int dist3y){//test whether jump shall be made
 	double x=(fabs(dy*dist1x-dx*dist1y)+fabs(dy*dist2x-dx*dist2y)+fabs(dy*dist3x-dx*dist3y))*0.5; //Area (3 triangles)
 	double distbef,distaf;
 //	printf("%lf\n",x);
@@ -90,9 +76,6 @@ struct pt * rm(int i, struct pt *pts){
 	return pts;
 }
 
-//double polyar(int p1, char pos, struct pt *pts, int *cs);
-
-int meas(struct pt *pts);
 
 int tabrep(int inew, int iold, struct pt *pts){ //inew->iold, iold's data is overwritten!
 	int j;
@@ -528,9 +511,6 @@ int t2(int i, struct pt *pts){
 		
 }
 
-int read(char *, char *, struct pt *);
-int jump(int i,struct pt *points);
-int write(char *suffix, struct pt *pts);
 int main(int argc, char *argv[]){
 	int test1,j,k,r;
 	long long i;

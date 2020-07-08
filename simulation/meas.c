@@ -1,7 +1,7 @@
-#define N 1000000
+#include "consts.h"
 
 #define POSORNE(a,b) ((pts[a].nb[0]==b)?0:((pts[a].nb[1]==b)?1:2))
-
+#define MEASP 1000
 extern int n;
 extern double ars[N];
 extern char ck[N];
@@ -14,12 +14,13 @@ struct pt{
 	unsigned int x;
 	unsigned int y;
 };
+
 struct polydata{
 	double ar[MEASP];
 	int sides[MEASP];
 };
 
-extern int write(char *suffix, struct pt *pts);
+//extern int write(char *suffix, struct pt *pts);
 double dist(struct pt *,int,int);
 static inline unsigned int mein_rand(void);
 double polyar(int p1, char pos, struct pt *pts, int polyind);
